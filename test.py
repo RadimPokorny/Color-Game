@@ -1,5 +1,7 @@
 import tkinter
 import random
+from tkinter import *
+from tkinter import ttk
 
 # list of possible colours
 colours = ['Red', 'Blue', 'Green', 'Pink', 'Black', 'Yellow', 'Orange', 'White', 'Purple', 'Brown']
@@ -13,7 +15,7 @@ time_left = 30
 # function that starts the game
 def start_game(event):
     global time_left
-    if time_left == 30:
+    if time_left > 0:
         countdown()
     next_colour()
 
@@ -52,6 +54,13 @@ def restart_game():
     e.delete(0, tkinter.END)
     label.config(fg="black", text="Welcome to the game!", font=('Helvetica', 60, 'bold'))
 
+# function to update the time left when a new time is selected from the dropdown
+def update_time(event):
+    global time_left
+    time_selected = int(time_dropdown.get())
+    time_left = time_selected
+    time_label.config(text="Time left: " + str(time_left))
+
 # create a GUI window
 root = tkinter.Tk()
 
@@ -86,6 +95,14 @@ game_over_label.pack()
 # set the background color of all the widgets to red
 for widget in root.winfo_children():
     widget.config(bg="#3D59AB")
+
+# add a dropdown menu for selecting the time
+time_options = ["10", "30", "60", "120"]
+selected_time = tkinter.StringVar(value=time_options[1])  # set the default value to 30 seconds
+time_dropdown = tkinter.OptionMenu(root, selected_time, *time_options)
+time_dropdown.config(font=('Helvetica', 20), bg='#3D59AB', fg='white', borderwidth=0)
+time_dropdown.pack(pady=20)
+selected_time_value = int(selected_time.get())
 
 # add a text entry box for typing in colours
 e = tkinter.Entry(root, font=('Helvetica', 30, 'bold'), borderwidth = 0, fg='#3D59AB')
