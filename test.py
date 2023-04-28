@@ -1,123 +1,109 @@
-# import the modules
 import tkinter
 import random
 
-# list of possible colour.
-colours = ['Red','Blue','Green','Pink','Black',
-		'Yellow','Orange','White','Purple','Brown']
+# list of possible colours
+colours = ['Red', 'Blue', 'Green', 'Pink', 'Black', 'Yellow', 'Orange', 'White', 'Purple', 'Brown']
+
+# game score
 score = 0
 
-# the game time left, initially 30 seconds.
-timeleft = 30
+# time left, initially 30 seconds
+time_left = 30
 
-# function that will start the game.
-def startGame(event):
-	
-	if timeleft == 30:
-		
-		# start the countdown timer.
-		countdown()
-		
-	# run the function to
-	# choose the next colour.
-	nextColour()
+# function that starts the game
+def start_game(event):
+    global time_left
+    if time_left == 30:
+        countdown()
+    next_colour()
 
-# Function to choose and
-# display the next colour.
-def nextColour():
+# function to choose and display the next colour
+def next_colour():
+    global score
+    global time_left
+    if time_left > 0:
+        e.focus_set()
+        if e.get().lower() == colours[1].lower():
+            score += 1
+        e.delete(0, tkinter.END)
+        random.shuffle(colours)
+        label.config(fg=str(colours[1]), text=str(colours[0]), font=('Helvetica', 60, 'bold'))
+        score_label.config(text="Score: " + str(score))
 
-	# use the globally declared 'score'
-	# and 'play' variables above.
-	global score
-	global timeleft
-
-	# if a game is currently in play
-	if timeleft > 0:
-
-		# make the text entry box active.
-		e.focus_set()
-
-		# if the colour typed is equal
-		# to the colour of the text
-		if e.get().lower() == colours[1].lower():
-			
-			score += 1
-
-		# clear the text entry box.
-		e.delete(0, tkinter.END)
-		
-		random.shuffle(colours)
-		
-		# change the colour to type, by changing the
-		# text _and_ the colour to a random colour value
-		label.config(fg = str(colours[1]), text = str(colours[0]), font=('Arial', 60))
-		
-		# update the score.
-		scoreLabel.config(text = "Score: " + str(score))
-
-
-# Countdown timer function
+# countdown timer function
 def countdown():
+    global time_left
+    if time_left > 0:
+        time_left -= 1
+        time_label.config(text="Time left: " + str(time_left))
+        time_label.after(1000, countdown)
+    else:
+        game_over_label.config(text="Game Over! Final Score: " + str(score))
 
-	global timeleft
-
-	# if a game is in play
-	if timeleft > 0:
-
-		 # decrement the timer.
-		timeleft -= 1
-		
-		# update the time left label
-		timeLabel.config(text = "Time left: "
-							+ str(timeleft))
-								
-		# run the function again after 1 second.
-		timeLabel.after(1000, countdown)
-
-
-# Driver Code
+# function to restart the game
+def restart_game():
+    global score
+    global time_left
+    score = 0
+    time_left = 30
+    score_label.config(text="Press enter to start")
+    time_label.config(text="Time left: " + str(time_left))
+    game_over_label.config(text="")
+    e.delete(0, tkinter.END)
+    label.config(fg="black", text="Welcome to the game!", font=('Helvetica', 60, 'bold'))
 
 # create a GUI window
 root = tkinter.Tk()
 
 # set the title
-root.title("COLORGAME")
+root.title("Color Game")
 
 # set the size
-root.geometry("375x200")
+root.geometry("1024x800")
+
+root.configure(bg="#3D59AB")
 
 # add an instructions label
-instructions = tkinter.Label(root, text = "Type in the colour"
-						"of the words, and not the word text!",
-									font = ('Helvetica', 12))
-instructions.pack()
+instructions_label = tkinter.Label(root, text="Type in the colour of the words, and not the word text!", font=('Helvetica', 30, 'bold'), fg='white')
+instructions_label.pack()
 
 # add a score label
-scoreLabel = tkinter.Label(root, text = "Press enter to start",
-									font = ('Helvetica', 12))
-scoreLabel.pack()
+score_label = tkinter.Label(root, text="Press enter to start", font=('Helvetica', 30, 'bold'), fg='white')
+score_label.pack()
 
 # add a time left label
-timeLabel = tkinter.Label(root, text = "Time left: " +
-			str(timeleft), font = ('Helvetica', 12))
-			
-timeLabel.pack()
+time_label = tkinter.Label(root, text="Time left: " + str(time_left), font=('Helvetica', 30, 'bold'), fg='white')
+time_label.pack()
 
 # add a label for displaying the colours
-label = tkinter.Label(root, font = ('Arial', 60))
+label = tkinter.Label(root, font=('Helvetica', 60, 'bold'))
 label.pack()
 
-# add a text entry box for
-# typing in colours
-e = tkinter.Entry(root)
+# add a game over label
+game_over_label = tkinter.Label(root, font=('Helvetica', 30, 'bold'), fg='red')
+game_over_label.pack()
 
-# run the 'startGame' function
-# when the enter key is pressed
-root.bind('<Return>', startGame)
+# set the background color of all the widgets to red
+for widget in root.winfo_children():
+    widget.config(bg="#3D59AB")
+
+# add a text entry box for typing in colours
+e = tkinter.Entry(root, font=('Helvetica', 30, 'bold'), borderwidth = 0, fg='#3D59AB')
+
+# run the 'start_game' function when the enter key is pressed
+root.bind('<Return>', start_game)
 e.pack()
 
 # set focus on the entry box
 e.focus_set()
+
+# add a frame to hold the restart button
+button_frame = tkinter.Frame(root, bg="#3D59AB")
+button_frame.pack(side=tkinter.BOTTOM, pady=20)
+
+# add a restart button
+restart_button = tkinter.Button(button_frame, text="Restart",font=('Helvetica', 30, 'bold') , fg='#3D59AB' ,bg='white', borderwidth = 0, command=restart_game)
+restart_button.pack()
 
 # start the GUI
 root.mainloop()
