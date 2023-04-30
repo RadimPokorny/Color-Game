@@ -13,6 +13,9 @@ score = 0
 # time left, initially 60 seconds
 time_left = 60
 
+#start countdown
+x = 6
+
 # function that starts the game
 def start_game(event):
     global time_left
@@ -35,22 +38,29 @@ def next_colour():
 
 # countdown timer function
 def countdown():
-    global time_left
-    if time_left > 0:
-        time_left -= 1
-        time_label.config(text="Time left: " + str(time_left))
+    global time_left, x
+    if x > 0:
+        e.config(state= "disabled")
+        x = x - 1
+        time_label.config(text="Game will start in: " + str(x))
         time_label.after(1000, countdown)
     else:
-        game_over_label.config(text="Game Over! Final Score: " + str(score))
+        e.config(state= "enabled")
+        if time_left > 0:
+            time_left -= 1
+            time_label.config(text="Time left: " + str(time_left))
+            time_label.after(1000, countdown)
+        else:
+            game_over_label.config(text="Game Over! Final Score: " + str(score))
 
 # function to restart the game
 def restart_game():
     global score
-    global time_left
+    global time_left, x
     score = 0
+    x = 6
     time_left = 60
-    score_label.config(text="Press enter to start")
-    time_label.config(text="Time left: " + str(time_left))
+    score_label.config(text="Game will start automatically")
     game_over_label.config(text="")
     e.delete(0, tkinter.END)
 
@@ -65,14 +75,14 @@ style.theme_use('azure')
 root.title("Color Game")
 
 # set the size
-root.geometry("400x250")
+root.geometry("320x320")
 
 font = tkFont.Font(family="Segoe UI", size=60, weight="bold")
 
 
 # add an instructions label
 instructions_label = ttk.Label(root, text="Type in the colour of the words, and not the word text!", style="TLabel")
-instructions_label.pack()
+instructions_label.pack(pady=10)
 
 # add a score label
 score_label = ttk.Label(root, text="Press enter to start", style="TLabel")
@@ -91,8 +101,8 @@ game_over_label = ttk.Label(root, style="TLabel")
 game_over_label.pack()
 
 # add a text entry box for typing in colours
-e = ttk.Entry(root, style="TEntry")
-
+e = ttk.Entry(root,style="TEntry")
+e.pack(pady=20)
 # run the 'start_game' function when the enter key is pressed
 root.bind('<Return>', start_game)
 e.pack()
@@ -101,7 +111,7 @@ e.pack()
 e.focus_set()
 
 # add a restart button
-restart_button = ttk.Button(root, text="Restart",style="Accentbutton", command=restart_game)
+restart_button = ttk.Button(root, text="Restart",style="Togglebutton", command=restart_game)
 restart_button.pack()
 
 # start the GUI
