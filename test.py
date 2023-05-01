@@ -19,7 +19,6 @@ x = 6
 # function that starts the game
 def start_game(event):
     global time_left
-    e.config(state= "disabled")
     if time_left == 60:
         countdown()
     next_colour()
@@ -41,6 +40,7 @@ def next_colour():
 def countdown():
     global time_left, x
     if x > 0:
+        e.config(state= "disabled")
         x = x - 1
         time_label.config(text="Game will start in: " + str(x))
         time_label.after(1000, countdown)
@@ -55,7 +55,6 @@ def countdown():
 
 # function to restart the game
 def restart_game():
-    e.config(state= "disabled")
     global score
     global time_left, x
     score = 0
@@ -66,39 +65,42 @@ def restart_game():
     e.delete(0, tkinter.END)
 
 
+def toggle_theme():
+    current_theme = style.theme_use()
+    if current_theme == "azure":
+        root.tk.call('lappend', 'auto_path', './azuredark')
+        root.tk.call('package', 'require', 'azuredark')
+        style.theme_settings('azure', settings=None, priority=0)
+        style.theme_use('azuredark')
+    else:
+        root.tk.call('lappend', 'auto_path', './azure')
+        root.tk.call('package', 'require', 'azure')
+        style.theme_settings('azuredark', settings=None, priority=0)
+        style.theme_use('azure')
+
+
+
+
 def dark_toggle():
-    
     if toggle_button.config('text')[-1] == 'Dark Mode':
         toggle_button.config(text='Light Mode')
-        for widget in root.winfo_children():
-            if widget != label:
-                widget.config(foreground="white", background = "#121212")
-            else:
-                widget.config(background = "#121212")
-            if widget == e:
-                widget.config(foreground="#121212", background = "white")
-            root.config(background="#121212")
+
     else:
         toggle_button.config(text='Dark Mode')
-        for widget in root.winfo_children():
-            if widget != label:    
-                widget.config(foreground="#121212", background = "white")
-            else:
-                widget.config(background = "white")
-            if widget == e:
-                widget.config(background = "#121212")
-            root.config(background="white")
+
+    root.update()
+
 
 
 # create a GUI window
 root = tkinter.Tk()
-
-style = ttk.Style(root)
-root.tk.call('source', 'azure/azure.tcl')
-style.theme_use('azure')
-
 # set the title 
 root.title("Color Game")
+
+style = ttk.Style(root)
+root.tk.call('source', 'azuredark/azuredark.tcl')
+
+style.theme_use('azure')
 
 # set the size
 root.geometry("520x520")
@@ -141,7 +143,7 @@ restart_button = ttk.Button(root, text="Restart",style="Togglebutton", command=r
 restart_button.grid(row=6, column=0, padx=10, pady=10)
 
 # add a switch button
-toggle_button = ttk.Checkbutton(root, text="Light Mode", style="Switch",width=10, command=dark_toggle)
+toggle_button = ttk.Checkbutton(root, text="Dark Mode", style="Switch",width=10, command=dark_toggle)
 toggle_button.grid(column= 3, row = 6, pady=10)
 
 # add the sizegrip
